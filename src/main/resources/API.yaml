@@ -1,0 +1,364 @@
+openapi: 3.0.0
+info:
+  title: Fitness API
+  version: 1.0.0
+  description: API для керування користувачами, тренуваннями, вправами та нагадуваннями
+
+servers:
+  - url: https://localhost:8080
+
+tags:
+  - name: Authentication
+    description: Авторизація та автентифікація
+  - name: Users
+    description: Керування користувачами
+  - name: Workouts
+    description: Тренування користувачів
+  - name: Exercises
+    description: Вправи для тренувань
+  - name: Workout Exercises
+    description: Прив'язка вправ до тренування
+  - name: Reminders
+    description: Нагадування користувачів
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required: [id, name, email]
+
+    UserInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [name, email, password]
+
+    Workout:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        name:
+          type: string
+        type:
+          type: string
+          enum: [фулбаді, верх-низ, спліт]
+        note:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkoutExerciseInput'
+      required: [id, date, name, type, user_id]
+
+    WorkoutInput:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        name:
+          type: string
+        type:
+          type: string
+          enum: [фулбаді, верх-низ, спліт]
+        note:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkoutExerciseInput'
+      required: [date, name, type, user_id]
+
+    Exercise:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        muscle_group:
+          type: string
+      required: [id, name]
+
+    ExerciseInput:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        muscle_group:
+          type: string
+      required: [name]
+
+    WorkoutExercise:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reps:
+          type: integer
+        weight:
+          type: number
+          format: float
+        sets:
+          type: integer
+        note:
+          type: string
+        exercise_id:
+          type: string
+          format: uuid
+        workout_id:
+          type: string
+          format: uuid
+      required: [id, reps, sets, exercise_id, workout_id]
+
+    WorkoutExerciseInput:
+      type: object
+      properties:
+        reps:
+          type: integer
+        weight:
+          type: number
+          format: float
+        sets:
+          type: integer
+        note:
+          type: string
+        exercise_id:
+          type: string
+          format: uuid
+        workout_id:
+          type: string
+          format: uuid
+      required: [reps, sets, exercise_id, workout_id]
+
+    Reminder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        time:
+          type: string
+          format: date-time
+        message:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+      required: [id, time, user_id]
+
+    ReminderInput:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+        message:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+      required: [time, user_id]
+
+paths:
+  /login:
+    post:
+      tags: [Authentication]
+      summary: Авторизація користувача
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Успішна авторизація
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+  /signup:
+    post:
+      tags: [Users]
+      summary: Реєстрація нового користувача
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: Користувач створений
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Отримати список користувачів
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Успішно
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /workouts:
+    get:
+      tags: [Workouts]
+      summary: Отримати список тренувань
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Список тренувань
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workout'
+
+    post:
+      tags: [Workouts]
+      summary: Створити тренування з вправами
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutInput'
+      responses:
+        '201':
+          description: Тренування з вправами створено
+
+  /exercises:
+    get:
+      tags: [Exercises]
+      summary: Отримати список вправ
+      responses:
+        '200':
+          description: Список вправ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exercise'
+
+    post:
+      tags: [Exercises]
+      summary: Додати нову вправу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExerciseInput'
+      responses:
+        '201':
+          description: Вправу додано
+
+  /workout-exercises:
+    post:
+      tags: [Workout Exercises]
+      summary: Додати вправу до тренування
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutExerciseInput'
+      responses:
+        '201':
+          description: Вправу додано до тренування
+
+  /reminders:
+    get:
+      tags: [Reminders]
+      summary: Отримати список нагадувань
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Список нагадувань
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reminder'
+
+    post:
+      tags: [Reminders]
+      summary: Створити нагадування
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderInput'
+      responses:
+        '201':
+          description: Нагадування створено
