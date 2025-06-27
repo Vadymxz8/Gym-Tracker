@@ -3,6 +3,7 @@ package com.vadim.tkach.gym_tracker.controller;
 import com.vadim.tkach.gym_tracker.controller.dto.UserDetailsDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserInputDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserUpdateDto;
+import com.vadim.tkach.gym_tracker.exception.UserNotFoundException;
 import com.vadim.tkach.gym_tracker.mapper.UserMapper;
 import com.vadim.tkach.gym_tracker.service.UserService;
 import com.vadim.tkach.gym_tracker.service.domain.User;
@@ -27,9 +28,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDetailsDto>> getUsers() {
-
         List<UserDetailsDto> userDetailsDtoList =
-                userService.getAllUsers().stream().map(userMapper::toUserDetailsDto)
+                userService.getAllUsers().stream()
+                        .map(userMapper::toUserDetailsDto)
                         .toList();
         return new ResponseEntity<>(userDetailsDtoList, HttpStatus.OK);
     }
@@ -51,16 +52,21 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
-
-        userDB.remove(id);
+        userService.deleteUser(id);
         log.info("Deleted user with ID: {}", id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @PutMapping
     public ResponseEntity<Void> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
 
         userService.updateUser(userMapper.toUser(userUpdateDto));
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Void> handleAdminNotFoundException(UserNotFoundException e) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
 
