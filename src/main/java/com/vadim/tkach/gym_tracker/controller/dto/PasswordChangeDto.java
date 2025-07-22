@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @Data
-public class UserUpdateDto {
-    private UUID id;
-    private String name;
-    private String email;
+@Builder
+public class PasswordChangeDto {
+    private String oldPassword;
+    private String newPassword;
+//    private String email;
 }
+

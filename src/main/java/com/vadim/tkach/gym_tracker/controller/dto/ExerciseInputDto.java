@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @Data
-public class UserUpdateDto {
-    private UUID id;
+@Builder
+public class ExerciseInputDto {
     private String name;
-    private String email;
+    private String type;
+    private String muscleGroup;
 }
+

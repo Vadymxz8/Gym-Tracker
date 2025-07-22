@@ -2,6 +2,7 @@ package com.vadim.tkach.gym_tracker.service;
 
 import com.vadim.tkach.gym_tracker.exception.UserNotFoundException;
 import com.vadim.tkach.gym_tracker.mapper.UserMapper;
+import com.vadim.tkach.gym_tracker.repository.entity.UserEntity;
 import com.vadim.tkach.gym_tracker.service.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,33 +25,38 @@ public class UserServiceImpl implements UserService {
 
 
         userRepository.save(userMapper.toUserEntity(user));
-//        log.info("Creating new user");
-//        user.setId(UUID.randomUUID());
-//        userMap.put(user.getId(), user);
-//
-//        log.info("User created: {}", user);
     }
 
     @Override
     public List<User> getAllUsers() {
-        return new ArrayList<>(userMap.values());
+
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toUser)
+               .toList();
 
     }
 
     @Override
     public User getUser(UUID id) {
-        if (userMap.containsKey(id)) {
-            return userMap.get(id);
-        }
+Optional<UserEntity> optionalUserEntity =
+        userRepository.findById(id);
+if(optionalUserEntity.isPresent()){
+    return userMapper.toUser(optionalUserEntity.get());
+}
         throw new UserNotFoundException("Admin with id " + id + " not found");
     }
 
     @Override
     public void updateUser(User user) {
         log.info("Updating user with id: {}", user.getId());
-        if (userMap.containsKey(user.getId())) {
-            userMap.put(user.getId(), user);
-            log.info("Admin updated: {}", user);
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(user.getId());
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            userEntity.setName(user.getName());
+            userEntity.setEmail(user.getEmail());
+
+            userRepository.save(userEntity);
         } else {
             throw new UserNotFoundException("User with id " + user.getId() + " not found");
         }

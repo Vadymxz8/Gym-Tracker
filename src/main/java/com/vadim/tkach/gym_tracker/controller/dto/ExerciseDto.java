@@ -8,8 +8,10 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Data
-public class UserUpdateDto {
+@Builder
+public class ExerciseDto {
     private UUID id;
     private String name;
-    private String email;
+    private String type;
+    private String muscleGroup;
 }
