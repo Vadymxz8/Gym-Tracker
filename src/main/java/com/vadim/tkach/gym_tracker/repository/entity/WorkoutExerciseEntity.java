@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -17,8 +18,8 @@ public class WorkoutExerciseEntity {
     private UUID id;
     @Column
     private Integer reps;
-    @Column
-    private Double weight;
+    @Column(precision = 5, scale = 2)
+    private BigDecimal weight;
     @Column
     private Integer sets;
     @Column

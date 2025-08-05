@@ -1,6 +1,6 @@
 package com.vadim.tkach.gym_tracker.repository.entity;
 
-import com.vadim.tkach.gym_tracker.service.domain.WorkoutType;
+import com.vadim.tkach.gym_tracker.service.model.WorkoutType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

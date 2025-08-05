@@ -1,4 +1,4 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.reminder;
 
 import com.vadim.tkach.gym_tracker.exception.ReminderNotFoundException;
 import com.vadim.tkach.gym_tracker.mapper.ReminderMapper;
@@ -6,7 +6,7 @@ import com.vadim.tkach.gym_tracker.repository.ReminderRepository;
 import com.vadim.tkach.gym_tracker.repository.UserRepository;
 import com.vadim.tkach.gym_tracker.repository.entity.ReminderEntity;
 import com.vadim.tkach.gym_tracker.repository.entity.UserEntity;
-import com.vadim.tkach.gym_tracker.service.domain.Reminder;
+import com.vadim.tkach.gym_tracker.service.model.Reminder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

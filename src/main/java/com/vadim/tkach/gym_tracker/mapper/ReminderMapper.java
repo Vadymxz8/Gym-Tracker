@@ -1,7 +1,7 @@
 package com.vadim.tkach.gym_tracker.mapper;
 
 import com.vadim.tkach.gym_tracker.repository.entity.ReminderEntity;
-import com.vadim.tkach.gym_tracker.service.domain.Reminder;
+import com.vadim.tkach.gym_tracker.service.model.Reminder;
 import org.springframework.stereotype.Component;
 
 @Component

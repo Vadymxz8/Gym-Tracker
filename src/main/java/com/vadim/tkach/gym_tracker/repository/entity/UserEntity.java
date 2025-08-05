@@ -24,6 +24,12 @@ public class UserEntity {
     private String email;
     @Column
     private String password;
+    @Column
+    private String type;
+    @Column
+    private UUID token;
+    @Column
+    private String status;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkoutEntity> workouts;

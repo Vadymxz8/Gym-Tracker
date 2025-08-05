@@ -1,4 +1,4 @@
-package com.vadim.tkach.gym_tracker.service.domain;
+package com.vadim.tkach.gym_tracker.service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,12 +1,11 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.workout;
 
 import com.vadim.tkach.gym_tracker.exception.UserNotFoundException;
 import com.vadim.tkach.gym_tracker.mapper.WorkoutExerciseMapper;
 import com.vadim.tkach.gym_tracker.mapper.WorkoutMapper;
 import com.vadim.tkach.gym_tracker.repository.*;
 import com.vadim.tkach.gym_tracker.repository.entity.*;
-import com.vadim.tkach.gym_tracker.service.domain.Workout;
-import com.vadim.tkach.gym_tracker.service.domain.WorkoutExercise;
+import com.vadim.tkach.gym_tracker.service.model.Workout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,19 +26,15 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     public void createWorkout(Workout workout) {
-        // Отримуємо користувача
         UserEntity userEntity = userRepository.findById(workout.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + workout.getUserId()));
 
-        // Конвертуємо Workout у WorkoutEntity без вправ
         WorkoutEntity workoutEntity = workoutMapper.toWorkoutEntity(workout, userEntity);
 
-        // Створюємо список WorkoutExerciseEntity
         List<WorkoutExerciseEntity> workoutExercises = workout.getExercises().stream()
                 .map(we -> {
                     WorkoutExerciseEntity entity = workoutExerciseMapper.toWorkoutExerciseEntity(we);
 
-                    // Отримуємо ExerciseEntity
                     ExerciseEntity exerciseEntity = exerciseRepository.findById(we.getExerciseId())
                             .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + we.getExerciseId()));
 

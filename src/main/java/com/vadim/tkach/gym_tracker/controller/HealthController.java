@@ -27,7 +27,7 @@ public class HealthController {
     }
 
 
-    @GetMapping("/gesundheit/{id}")
+    @GetMapping("/health/{id}")
     public ResponseEntity<String> health(@PathVariable String id){
         return new ResponseEntity<>("Gesundheit: " + id, HttpStatus.OK);
     }

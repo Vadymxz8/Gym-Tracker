@@ -1,4 +1,4 @@
-package com.vadim.tkach.gym_tracker.service.domain;
+package com.vadim.tkach.gym_tracker.service.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +15,6 @@ public class User {
         private  String name;
         private  String email;
         private  String password;
+        private UUID token;
+        private UserStatus status;
 }

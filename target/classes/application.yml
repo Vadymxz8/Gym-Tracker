@@ -8,6 +8,25 @@ spring:
     password: ${DATABASE_PASSWORD:postgres_password}
     driver-class-name: org.postgresql.Driver
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: vadim.tkach2017@gmail.com
+    password: ${GMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+
+jwt:
+  secret: ${JWT_SECRET}
+  ttl-millis: 43200000 # 12 hours
+
   jpa:
     hibernate:
       ddl-auto: update

@@ -1,6 +1,6 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.reminder;
 
-import com.vadim.tkach.gym_tracker.service.domain.Reminder;
+import com.vadim.tkach.gym_tracker.service.model.Reminder;
 
 import java.util.List;
 import java.util.UUID;

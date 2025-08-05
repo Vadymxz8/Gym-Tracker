@@ -1,8 +1,8 @@
 package com.vadim.tkach.gym_tracker.mapper;
 
 import com.vadim.tkach.gym_tracker.repository.entity.WorkoutEntity;
-import com.vadim.tkach.gym_tracker.service.domain.Workout;
-import com.vadim.tkach.gym_tracker.service.domain.WorkoutType;
+import com.vadim.tkach.gym_tracker.service.model.Workout;
+import com.vadim.tkach.gym_tracker.service.model.WorkoutType;
 import com.vadim.tkach.gym_tracker.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -45,14 +45,14 @@ public class WorkoutMapper {
         entity.setWorkoutType(workout.getType());
         entity.setUser(userEntity);
 
-       return entity;
+        return entity;
     }
 
     private WorkoutType parseWorkoutType(String value) {
         try {
             return WorkoutType.valueOf(value);
         } catch (IllegalArgumentException | NullPointerException e) {
-            return null; // або можна логувати або кидати виняток
+            return null;
         }
     }
 }

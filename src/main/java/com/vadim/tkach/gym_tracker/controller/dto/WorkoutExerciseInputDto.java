@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -11,7 +12,7 @@ import java.util.UUID;
 @Builder
 public class WorkoutExerciseInputDto {
     private int reps;
-    private float weight;
+    private BigDecimal weight;
     private int sets;
     private String note;
     private UUID exerciseId;

@@ -9,7 +9,7 @@ CREATE TABLE Workouts (
     id UUID PRIMARY KEY,
     date DATE NOT NULL,
     name VARCHAR(50) NOT NULL,
-    workout_type  VARCHAR(50) NOT NULL CHECK (workout_type IN ('фулбаді', 'верх-низ', 'спліт')) DEFAULT 'фулбаді',
+    workout_type VARCHAR(50) NOT NULL CHECK (workout_type IN ('FULLBODY', 'UPPER_LOWER', 'SPLIT')) DEFAULT 'FULLBODY',
     note TEXT,
     user_id UUID NOT NULL REFERENCES users(id)
 );

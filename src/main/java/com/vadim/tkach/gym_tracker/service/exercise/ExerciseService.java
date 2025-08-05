@@ -1,6 +1,6 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.exercise;
 
-import com.vadim.tkach.gym_tracker.service.domain.Exercise;
+import com.vadim.tkach.gym_tracker.service.model.Exercise;
 
 import java.util.List;
 import java.util.UUID;

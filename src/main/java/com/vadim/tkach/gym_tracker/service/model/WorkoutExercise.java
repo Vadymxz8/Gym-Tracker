@@ -1,10 +1,11 @@
-package com.vadim.tkach.gym_tracker.service.domain;
+package com.vadim.tkach.gym_tracker.service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class WorkoutExercise {
     private UUID id;
     private Integer reps;
-    private Float weight;
+    private BigDecimal weight;
     private Integer sets;
     private String note;
     private UUID exerciseId;

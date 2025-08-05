@@ -1,4 +1,4 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.workout;
 
 import com.vadim.tkach.gym_tracker.mapper.WorkoutExerciseMapper;
 import com.vadim.tkach.gym_tracker.repository.ExerciseRepository;
@@ -7,7 +7,7 @@ import com.vadim.tkach.gym_tracker.repository.WorkoutRepository;
 import com.vadim.tkach.gym_tracker.repository.entity.ExerciseEntity;
 import com.vadim.tkach.gym_tracker.repository.entity.WorkoutEntity;
 import com.vadim.tkach.gym_tracker.repository.entity.WorkoutExerciseEntity;
-import com.vadim.tkach.gym_tracker.service.domain.WorkoutExercise;
+import com.vadim.tkach.gym_tracker.service.model.WorkoutExercise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

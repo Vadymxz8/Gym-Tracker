@@ -4,10 +4,8 @@ import com.vadim.tkach.gym_tracker.controller.dto.UserDetailsDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserInputDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserUpdateDto;
 import com.vadim.tkach.gym_tracker.repository.entity.UserEntity;
-import com.vadim.tkach.gym_tracker.service.domain.User;
+import com.vadim.tkach.gym_tracker.service.model.User;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.util.ClassUtil.name;
 
@@ -49,6 +47,7 @@ public class UserMapper {
                 .id(user.getId() != null ? user.getId() : null)
                 .name(user.getName())
                 .email(user.getEmail())
+                .token(user.getToken())
                 .build();
     }
 

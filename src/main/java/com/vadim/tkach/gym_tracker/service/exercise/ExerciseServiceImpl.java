@@ -1,10 +1,10 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.exercise;
 
 import com.vadim.tkach.gym_tracker.exception.ExerciseNotFoundException;
 import com.vadim.tkach.gym_tracker.mapper.ExerciseMapper;
 import com.vadim.tkach.gym_tracker.repository.ExerciseRepository;
 import com.vadim.tkach.gym_tracker.repository.entity.ExerciseEntity;
-import com.vadim.tkach.gym_tracker.service.domain.Exercise;
+import com.vadim.tkach.gym_tracker.service.model.Exercise;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

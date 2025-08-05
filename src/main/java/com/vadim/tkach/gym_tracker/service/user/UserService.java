@@ -1,6 +1,6 @@
-package com.vadim.tkach.gym_tracker.service;
+package com.vadim.tkach.gym_tracker.service.user;
 
-import com.vadim.tkach.gym_tracker.service.domain.User;
+import com.vadim.tkach.gym_tracker.service.model.User;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +12,11 @@ public interface UserService {
 
     User getUser(UUID id);
 
+    User getByToken(String token);
+
     void updateUser(User user);
 
     void deleteUser(UUID id);
+
+    void completeRegistration(String userId, String password);
 }

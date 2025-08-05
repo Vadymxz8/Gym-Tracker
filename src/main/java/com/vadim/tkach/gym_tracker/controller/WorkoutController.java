@@ -1,7 +1,7 @@
 package com.vadim.tkach.gym_tracker.controller;
 
-import com.vadim.tkach.gym_tracker.service.WorkoutService;
-import com.vadim.tkach.gym_tracker.service.domain.Workout;
+import com.vadim.tkach.gym_tracker.service.workout.WorkoutService;
+import com.vadim.tkach.gym_tracker.service.model.Workout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,7 @@ public class WorkoutController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/by-user/{userId}")
     public ResponseEntity<List<Workout>> getWorkoutsByUserId(@PathVariable UUID userId) {
         return ResponseEntity.ok(workoutService.getWorkoutsByUserId(userId));
     }
