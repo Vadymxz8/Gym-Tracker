@@ -10,6 +10,5 @@ import lombok.Data;
 public class PasswordChangeDto {
     private String oldPassword;
     private String newPassword;
-//    private String email;
 }
 

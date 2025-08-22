@@ -9,5 +9,5 @@ import lombok.Data;
 @Builder
 public class PasswordCompleteDto {
     private String token;
-    private String newPassword;
+    private String password;
 }

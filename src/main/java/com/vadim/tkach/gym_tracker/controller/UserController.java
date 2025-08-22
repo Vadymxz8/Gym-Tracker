@@ -16,7 +16,7 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,6 +31,12 @@ public class UserController {
                         .map(userMapper::toUserDetailsDto)
                         .toList();
         return new ResponseEntity<>(userDetailsDtoList, HttpStatus.OK);
+    }
+    @GetMapping("/me")
+    public ResponseEntity<UserDetailsDto> getCurrentUser() {
+        User currentUser = userService.getAuthenticatedUser();
+        UserDetailsDto dto = userMapper.toUserDetailsDto(currentUser);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping

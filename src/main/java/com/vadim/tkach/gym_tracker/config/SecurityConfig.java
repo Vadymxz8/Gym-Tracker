@@ -28,12 +28,6 @@ public class SecurityConfig {
 
     private final TokenAuthFilter tokenAuthFilter;
 
-    /*
-     * Custom UserDetailsService bean to disable Spring Boot's default in-memory user.
-     *
-     * <p>By throwing a UsernameNotFoundException for any username, this bean prevents Spring Security
-     * from creating a default user with a generated password during development.
-     */
     @Bean
     UserDetailsService emptyDetailsService() {
         return username -> {
@@ -44,38 +38,39 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .securityContext(
-                        securityContext ->
-                                securityContext
-                                        .requireExplicitSave(true)
-                                        .securityContextRepository(
-                                                new DelegatingSecurityContextRepository(
-                                                        new RequestAttributeSecurityContextRepository(),
-                                                        new HttpSessionSecurityContextRepository())))
-                .authorizeHttpRequests(
-                        requests ->
-                                requests
-                                        .requestMatchers(
-                                                "/login",
-                                                "/signup",
-                                                "/exercises"
-                                        ).permitAll()
-                                        .anyRequest()
-                                        .authenticated())
-                .cors(
-                        cors ->
-                                cors.configurationSource(
-                                        request -> {
-                                            CorsConfiguration configuration = new CorsConfiguration();
-                                            configuration.setAllowedOrigins(List.of("*"));
-                                            configuration.setAllowedMethods(List.of("*"));
-                                            configuration.setAllowedHeaders(List.of("*"));
-                                            return configuration;
-                                        }))
+                .csrf(csrf -> csrf.disable())
+                .securityContext(securityContext ->
+                        securityContext
+                                .requireExplicitSave(true)
+                                .securityContextRepository(
+                                        new DelegatingSecurityContextRepository(
+                                                new RequestAttributeSecurityContextRepository(),
+                                                new HttpSessionSecurityContextRepository())))
+                .authorizeHttpRequests(requests ->
+                        requests
+                                .requestMatchers("/api/**").permitAll()
+                                .requestMatchers("/api/exercises/**").permitAll()
+                                .requestMatchers("/api/workouts/**").permitAll()
+                                .requestMatchers(
+                                        "/users/login",
+                                        "/users/registration-complete",
+                                        "/users/passwords/reset",
+                                        "/users/passwords/reset-verify**",
+                                        "/users/passwords/reset-complete"
+                                ).permitAll()
+                                .anyRequest().authenticated()
+                )
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(List.of("*"));
+                    configuration.setAllowedMethods(List.of("*"));
+                    configuration.setAllowedHeaders(List.of("*"));
+                    return configuration;
+                }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(
-                        e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .exceptionHandling(e ->
+                        e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .build();
     }
 

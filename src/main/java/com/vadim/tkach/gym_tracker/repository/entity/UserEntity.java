@@ -3,6 +3,7 @@ package com.vadim.tkach.gym_tracker.repository.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.*;
 
 
@@ -30,6 +31,13 @@ public class UserEntity {
     private UUID token;
     @Column
     private String status;
+    private UUID resetToken;
+
+    private Instant resetTokenExpiresAt;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkoutEntity> workouts;

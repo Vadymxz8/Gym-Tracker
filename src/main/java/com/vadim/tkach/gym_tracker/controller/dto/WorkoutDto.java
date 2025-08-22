@@ -1,5 +1,7 @@
 package com.vadim.tkach.gym_tracker.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +19,8 @@ public class WorkoutDto {
     private String name;
     private String type;
     private String note;
+
+    @JsonProperty("userId")
     private UUID userId;
     private List<WorkoutExerciseInputDto> exercises;
 }

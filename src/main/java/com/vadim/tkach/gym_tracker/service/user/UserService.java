@@ -18,5 +18,16 @@ public interface UserService {
 
     void deleteUser(UUID id);
 
-    void completeRegistration(String userId, String password);
+    void completeRegistration(String token, String password);
+
+    User getAuthenticatedUser();
+
+    void changeOwnPassword(String oldPassword, String newPassword);
+
+    void requestPasswordReset(String email);
+
+    User verifyPasswordResetToken(String token);
+
+    void completePasswordReset(String token, String newPassword);
 }
+

@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -30,8 +30,18 @@ import java.util.UUID;
 public class TokenAuthFilter extends OncePerRequestFilter {
 
     private static final String BEARER_TOKEN_PREFIX = "Bearer ";
-
     private final TokenService tokenService;
+
+    // ✅ Whitelist — ендпоінти, які не вимагають токена
+    private static final List<String> PUBLIC_ENDPOINTS = List.of(
+            "/users/login",
+            "/users/signup",
+            "/users/registration",
+            "/users/registration-complete",
+            "/users/passwords/reset",
+            "/users/passwords/reset-verify",
+            "/users/passwords/reset-complete"
+    );
 
     @Override
     protected void doFilterInternal(
@@ -40,37 +50,45 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String jwt = getJwtFromRequest(request);
+        String path = request.getServletPath();
 
-        if (!StringUtils.hasText(jwt) || !tokenService.isValidToken(jwt)) {
-            // JWT не переданий або невалідний — пропускаємо без автентифікації
+        // Якщо endpoint у whitelist — пропускаємо без перевірки токена
+        if (isPublicEndpoint(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        UUID userId = tokenService.getUserId(jwt); // ← Повертає UUID
+        String jwt = getJwtFromRequest(request);
 
-        // Тут можна додати ролі, якщо потрібно. Зараз просто порожній список
+        if (!StringUtils.hasText(jwt) || !tokenService.isValidToken(jwt)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        UUID userId = tokenService.getUserId(jwt);
+
         UserDetails userDetails = new User(
                 userId.toString(),
-                jwt,
-                Collections.emptyList() // Без GrantedAuthority
+                "", // пароль не потрібен у JWT-фільтрі
+                Collections.emptyList() // ролі можна додати за потреби
         );
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, jwt, userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        SecurityContext securityContext = SecurityContextHolder.getContext();
+        var securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
 
-        RequestAttributeSecurityContextRepository requestAttributeSecurityContextRepository =
-                new RequestAttributeSecurityContextRepository();
-
-        requestAttributeSecurityContextRepository.saveContext(securityContext, request, response);
+        new RequestAttributeSecurityContextRepository()
+                .saveContext(securityContext, request, response);
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isPublicEndpoint(String path) {
+        return PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
@@ -81,4 +99,3 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         return null;
     }
 }
-

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -37,20 +37,20 @@ public class AuthController {
 
     @PostMapping("/registration-complete")
     public ResponseEntity<Void> completeRegistration(
-            @RequestBody UserRegistrationCompleteDto registrationCompleteDto) {
+            @RequestBody UserRegistrationCompleteDto userRegistrationComplete) {
 
         userService.completeRegistration(
-                registrationCompleteDto.getToken(),
-                registrationCompleteDto.getPassword());
+                userRegistrationComplete.getToken(),
+                userRegistrationComplete.getPassword());
 
         return ResponseEntity.ok().build();
     }
-
     @PostMapping("/login")
     public ResponseEntity<AuthTokenDto> login(@RequestBody AuthCredentialsDto authCredentialsDto) {
-
+        log.info("Login request for email='{}'", authCredentialsDto.getEmail());
         String token = loginService.login(authCredentialsDto.getEmail(), authCredentialsDto.getPassword());
-
+        log.info("Login success for email='{}', tokenGenerated={}", authCredentialsDto.getEmail(), token != null);
         return new ResponseEntity<>(new AuthTokenDto(token), HttpStatus.OK);
     }
+
 }

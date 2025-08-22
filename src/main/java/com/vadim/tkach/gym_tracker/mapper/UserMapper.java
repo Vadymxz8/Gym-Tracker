@@ -5,6 +5,7 @@ import com.vadim.tkach.gym_tracker.controller.dto.UserInputDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserUpdateDto;
 import com.vadim.tkach.gym_tracker.repository.entity.UserEntity;
 import com.vadim.tkach.gym_tracker.service.model.User;
+import com.vadim.tkach.gym_tracker.service.model.UserStatus;
 import org.springframework.stereotype.Component;
 
 import static com.fasterxml.jackson.databind.util.ClassUtil.name;
@@ -39,6 +40,9 @@ public class UserMapper {
                 .id(userEntity.getId())
                 .name(userEntity.getName())
                 .email(userEntity.getEmail())
+                .password(userEntity.getPassword())
+                .token(userEntity.getToken())
+                .status(userEntity.getStatus() != null ? UserStatus.valueOf(userEntity.getStatus()) : null)
                 .build();
     }
 
@@ -47,7 +51,9 @@ public class UserMapper {
                 .id(user.getId() != null ? user.getId() : null)
                 .name(user.getName())
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .token(user.getToken())
+                .status(user.getStatus() != null ? user.getStatus().name() : null)
                 .build();
     }
 

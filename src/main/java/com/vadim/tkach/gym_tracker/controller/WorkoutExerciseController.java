@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/workout-exercises")
+@RequestMapping("/api/workout-exercises")
 @RequiredArgsConstructor
 public class WorkoutExerciseController {
 
