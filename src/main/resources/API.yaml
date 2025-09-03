@@ -20,6 +20,8 @@ tags:
     description: Прив'язка вправ до тренування
   - name: Reminders
     description: Нагадування користувачів
+  - name: Progress
+    description: Аналітика прогресу
 
 components:
   securitySchemes:
@@ -199,7 +201,7 @@ components:
       required: [time, user_id]
 
 paths:
-  /login:
+  /api/login:
     post:
       tags: [Authentication]
       summary: Авторизація користувача
@@ -228,7 +230,7 @@ paths:
                     type: string
                     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-  /signup:
+  /api/signup:
     post:
       tags: [Users]
       summary: Реєстрація нового користувача
@@ -242,7 +244,7 @@ paths:
         '201':
           description: Користувач створений
 
-  /users:
+  /api/users:
     get:
       tags: [Users]
       summary: Отримати список користувачів
@@ -258,7 +260,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
 
-  /workouts:
+  /api/workouts:
     get:
       tags: [Workouts]
       summary: Отримати список тренувань
@@ -289,7 +291,7 @@ paths:
         '201':
           description: Тренування з вправами створено
 
-  /exercises:
+  /api/exercises:
     get:
       tags: [Exercises]
       summary: Отримати список вправ
@@ -316,7 +318,7 @@ paths:
         '201':
           description: Вправу додано
 
-  /workout-exercises:
+  /api/workout-exercises:
     post:
       tags: [Workout Exercises]
       summary: Додати вправу до тренування
@@ -332,7 +334,7 @@ paths:
         '201':
           description: Вправу додано до тренування
 
-  /reminders:
+  /api/reminders:
     get:
       tags: [Reminders]
       summary: Отримати список нагадувань
@@ -362,3 +364,141 @@ paths:
       responses:
         '201':
           description: Нагадування створено
+
+  /api/progress/summary:
+    get:
+      tags: [Progress]
+      summary: Зведена статистика прогресу користувача
+      parameters:
+        - in: query
+          name: range
+          required: true
+          schema:
+            type: string
+            enum: [week, month]
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Зведені дані
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  days:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date
+                        volume:
+                          type: number
+                        sessions:
+                          type: integer
+                        est1rm_best:
+                          type: number
+                  totals:
+                    type: object
+                    properties:
+                      volume:
+                        type: number
+                      sessions:
+                        type: integer
+                  trend:
+                    type: object
+                    properties:
+                      est1rm_change_pct:
+                        type: number
+                      volume_change_pct:
+                        type: number
+                  stagnation:
+                    type: boolean
+
+  /api/progress/exercise:
+    get:
+      tags: [Progress]
+      summary: Прогрес по конкретній вправі
+      parameters:
+        - in: query
+          name: exerciseId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: range
+          required: true
+          schema:
+            type: string
+            enum: [week, month]
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Дані по вправі
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                    est1rm_best:
+                      type: number
+                    volume:
+                      type: number
+
+  /api/sessions:
+    get:
+      tags: [Progress]
+      summary: Історія тренувань користувача
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: cursor
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список тренувань
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    date:
+                      type: string
+                      format: date
+                    name:
+                      type: string
+                    note:
+                      type: string
