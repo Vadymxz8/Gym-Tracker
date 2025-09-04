@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 
-    @GetMapping("/health")
+    @GetMapping("/api/health")
     public ResponseEntity<String> health(@RequestParam(required = false) Integer number) {
        if(number == null){
            return new ResponseEntity<>("You must enter a numbe", HttpStatus.BAD_REQUEST);
@@ -27,7 +27,7 @@ public class HealthController {
     }
 
 
-    @GetMapping("/gesundheit/{id}")
+    @GetMapping("/health/{id}")
     public ResponseEntity<String> health(@PathVariable String id){
         return new ResponseEntity<>("Gesundheit: " + id, HttpStatus.OK);
     }

@@ -1,17 +1,19 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Fitness API
   version: 1.0.0
-  description: API для керування користувачами, тренуваннями, вправами та нагадуваннями
+  description: API для керування користувачами, тренуваннями, вправами та нагадуваннями.
 
 servers:
   - url: https://localhost:8080
 
 tags:
-  - name: Authentication
-    description: Авторизація та автентифікація
   - name: Users
     description: Керування користувачами
+  - name: Auth
+    description: Авторизація та реєстрація
+  - name: Passwords
+    description: Скидання і зміна пароля
   - name: Workouts
     description: Тренування користувачів
   - name: Exercises
@@ -54,154 +56,46 @@ components:
           type: string
       required: [name, email, password]
 
-    Workout:
+    UserRegistrationComplete:
       type: object
       properties:
-        id:
+        token:
           type: string
-          format: uuid
-        date:
+        password:
           type: string
-          format: date
-        name:
-          type: string
-        type:
-          type: string
-          enum: [фулбаді, верх-низ, спліт]
-        note:
-          type: string
-        user_id:
-          type: string
-          format: uuid
-        exercises:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkoutExerciseInput'
-      required: [id, date, name, type, user_id]
+      required: [token, password]
 
-    WorkoutInput:
+    PasswordResetComplete:
       type: object
       properties:
-        date:
+        token:
           type: string
-          format: date
-        name:
+        password:
           type: string
-        type:
-          type: string
-          enum: [фулбаді, верх-низ, спліт]
-        note:
-          type: string
-        user_id:
-          type: string
-          format: uuid
-        exercises:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkoutExerciseInput'
-      required: [date, name, type, user_id]
-
-    Exercise:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        type:
-          type: string
-        muscle_group:
-          type: string
-      required: [id, name]
-
-    ExerciseInput:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          type: string
-        muscle_group:
-          type: string
-      required: [name]
-
-    WorkoutExercise:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        reps:
-          type: integer
-        weight:
-          type: number
-          format: float
-        sets:
-          type: integer
-        note:
-          type: string
-        exercise_id:
-          type: string
-          format: uuid
-        workout_id:
-          type: string
-          format: uuid
-      required: [id, reps, sets, exercise_id, workout_id]
-
-    WorkoutExerciseInput:
-      type: object
-      properties:
-        reps:
-          type: integer
-        weight:
-          type: number
-          format: float
-        sets:
-          type: integer
-        note:
-          type: string
-        exercise_id:
-          type: string
-          format: uuid
-        workout_id:
-          type: string
-          format: uuid
-      required: [reps, sets, exercise_id, workout_id]
-
-    Reminder:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        time:
-          type: string
-          format: date-time
-        message:
-          type: string
-        user_id:
-          type: string
-          format: uuid
-      required: [id, time, user_id]
-
-    ReminderInput:
-      type: object
-      properties:
-        time:
-          type: string
-          format: date-time
-        message:
-          type: string
-        user_id:
-          type: string
-          format: uuid
-      required: [time, user_id]
+      required: [token, password]
 
 paths:
-  /login:
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Отримати список користувачів
+      security: [ { BearerAuth: [] } ]
+      responses:
+        '200':
+          description: Список користувачів
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '204':
+          description: Користувачі не знайдені
+
+  /users/login:
     post:
-      tags: [Authentication]
+      tags: [Auth]
       summary: Авторизація користувача
       requestBody:
         required: true
@@ -226,11 +120,12 @@ paths:
                 properties:
                   token:
                     type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '401':
+          description: Невірні облікові дані
 
-  /signup:
+  /users/signup:
     post:
-      tags: [Users]
+      tags: [Auth]
       summary: Реєстрація нового користувача
       requestBody:
         required: true
@@ -240,23 +135,116 @@ paths:
               $ref: '#/components/schemas/UserInput'
       responses:
         '201':
-          description: Користувач створений
+          description: Користувач створений та email з підтвердженням надісланий
 
-  /users:
+  /users/registration-confirm:
     get:
-      tags: [Users]
-      summary: Отримати список користувачів
-      security:
-        - BearerAuth: []
+      tags: [Auth]
+      summary: Підтвердити email користувача
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Успішно
+          description: Email підтверджено
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User'
+
+  /users/registration-complete:
+    post:
+      tags: [Auth]
+      summary: Завершити реєстрацію користувача
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationComplete'
+      responses:
+        '200':
+          description: Реєстрація завершена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/passwords:
+    put:
+      tags: [Passwords]
+      summary: Змінити власний пароль
+      security: [ { BearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [old_password, new_password]
+              properties:
+                old_password:
+                  type: string
+                new_password:
+                  type: string
+      responses:
+        '200':
+          description: Пароль змінено
+        '403':
+          description: Немає прав доступу
+
+  /users/passwords/reset:
+    put:
+      tags: [Passwords]
+      summary: Запит на скидання пароля
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Лист для скидання пароля надіслано
+
+  /users/passwords/reset-verify:
+    get:
+      tags: [Passwords]
+      summary: Перевірка токена для скидання пароля
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Токен підтверджено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/passwords/reset-complete:
+    post:
+      tags: [Passwords]
+      summary: Завершення скидання пароля
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetComplete'
+      responses:
+        '200':
+          description: Пароль скинуто
 
   /workouts:
     get:

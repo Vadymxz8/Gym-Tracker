@@ -3,10 +3,9 @@ package com.vadim.tkach.gym_tracker.controller;
 import com.vadim.tkach.gym_tracker.controller.dto.UserDetailsDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserInputDto;
 import com.vadim.tkach.gym_tracker.controller.dto.UserUpdateDto;
-import com.vadim.tkach.gym_tracker.exception.UserNotFoundException;
 import com.vadim.tkach.gym_tracker.mapper.UserMapper;
-import com.vadim.tkach.gym_tracker.service.UserService;
-import com.vadim.tkach.gym_tracker.service.domain.User;
+import com.vadim.tkach.gym_tracker.service.user.UserService;
+import com.vadim.tkach.gym_tracker.service.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,14 +16,13 @@ import java.util.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
 
-    private final Map<UUID, UserDetailsDto> userDB = new HashMap<>();
 
     @GetMapping
     public ResponseEntity<List<UserDetailsDto>> getUsers() {
@@ -33,6 +31,12 @@ public class UserController {
                         .map(userMapper::toUserDetailsDto)
                         .toList();
         return new ResponseEntity<>(userDetailsDtoList, HttpStatus.OK);
+    }
+    @GetMapping("/me")
+    public ResponseEntity<UserDetailsDto> getCurrentUser() {
+        User currentUser = userService.getAuthenticatedUser();
+        UserDetailsDto dto = userMapper.toUserDetailsDto(currentUser);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping
@@ -57,16 +61,16 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping
-    public ResponseEntity<Void> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateUser(
+            @PathVariable UUID id,
+            @RequestBody UserUpdateDto dto) {
 
-        userService.updateUser(userMapper.toUser(userUpdateDto));
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+        User user = userMapper.toUser(dto);
+        user.setId(id);
+        userService.updateUser(user);
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Void> handleAdminNotFoundException(UserNotFoundException e) {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok().build();
     }
 }
 

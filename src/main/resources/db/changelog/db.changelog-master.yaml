@@ -2,6 +2,14 @@ databaseChangeLog:
   - include:
       file: 001-create-schema.sql
       relativeToChangelogFile: true
+
   - include:
-      file: 002-add-default-admin.sql
+      file: 002-add-default-user.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: 003-modify-user-table-set-password-nullable.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 004-modify-user-add-token-column.sql
       relativeToChangelogFile: true
