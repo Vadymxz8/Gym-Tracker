@@ -16,21 +16,24 @@ public class WorkoutExerciseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column
+
+    @Column(nullable = false)
     private Integer reps;
+
     @Column(precision = 5, scale = 2)
-    private BigDecimal weight;
-    @Column
+    private BigDecimal weight; // може бути null у БД — залишаємо без nullable=false
+
+    @Column(nullable = false)
     private Integer sets;
+
     @Column
     private String note;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id", nullable = false)
     private ExerciseEntity exercise;
 
-    @ManyToOne
-    @JoinColumn(name = "workout_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workout_id", nullable = false)
     private WorkoutEntity workout;
 }
-
