@@ -10,6 +10,19 @@ databaseChangeLog:
   - include:
       file: 003-modify-user-table-set-password-nullable.sql
       relativeToChangelogFile: true
+
   - include:
       file: 004-modify-user-add-token-column.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: 005-add-reset-token-columns.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: 006-add-created-updated-at-to-users.sql
+      relativeToChangelogFile: true
+
+  - include:
+      file: 007-sync-users-table-with-entity.sql
       relativeToChangelogFile: true

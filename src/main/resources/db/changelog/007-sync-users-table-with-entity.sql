@@ -1,0 +1,21 @@
+-- liquibase formatted sql
+
+-- changeset vadym:sync-users-table-with-entity-v2
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE';
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS type VARCHAR(50);
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS reset_token UUID;
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS reset_token_expires_at TIMESTAMP;
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
