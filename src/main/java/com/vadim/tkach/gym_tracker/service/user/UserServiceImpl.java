@@ -39,9 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(User user) {
-        user.setStatus(UserStatus.PENDING);
         log.info("Creating new user");
-
         user.setStatus(UserStatus.PENDING);
 
         UUID token = UUID.randomUUID();
@@ -49,23 +47,21 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(userMapper.toUserEntity(user));
 
-//        emailService.sendEmail(
-//                user.getEmail(),
-//                "Confirm registration",
-//                "Please confirm your registration by clicking the link below:\n"
-//                        + frontendBaseUrl
-//                        + "/users/registration-confirm?token="
-//                        + token
-//        );
+        String link = frontendBaseUrl + "/users/registration-confirm?token=" + token;
+
         try {
-            emailService.sendEmail(...);
+            emailService.sendEmail(
+                    user.getEmail(),
+                    "Confirm registration",
+                    "Please confirm your registration by clicking the link below:\n" + link
+            );
         } catch (Exception e) {
             log.warn("Email sending failed, but user created", e);
         }
 
-
         log.info("User created: {}", user);
     }
+
 
     @Override
     public List<User> getAllUsers() {
@@ -165,17 +161,23 @@ public class UserServiceImpl implements UserService {
             userRepository.save(entity);
 
             String link = frontendBaseUrl + "/users/passwords/reset-verify?token=" + resetToken;
-            emailService.sendEmail(
-                    entity.getEmail(),
-                    "Password reset",
-                    "To reset your password please follow the link below (valid for " + resetTtlHours + "h):\n" + link
-            );
+
+            try {
+                emailService.sendEmail(
+                        entity.getEmail(),
+                        "Password reset",
+                        "To reset your password please follow the link below (valid for " + resetTtlHours + "h):\n" + link
+                );
+            } catch (Exception e) {
+                log.warn("Failed to send password reset email to {}: {}", email, e.getMessage(), e);
+            }
 
             log.info("Password reset token generated for userId={}, expiresAt={}", entity.getId(), expiresAt);
         });
 
         // Навмисно не розкриваємо існування email — завжди 200 OK
     }
+
 
     @Override
     public User verifyPasswordResetToken(String token) {
