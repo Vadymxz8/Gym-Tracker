@@ -49,14 +49,20 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(userMapper.toUserEntity(user));
 
-        emailService.sendEmail(
-                user.getEmail(),
-                "Confirm registration",
-                "Please confirm your registration by clicking the link below:\n"
-                        + frontendBaseUrl
-                        + "/users/registration-confirm?token="
-                        + token
-        );
+//        emailService.sendEmail(
+//                user.getEmail(),
+//                "Confirm registration",
+//                "Please confirm your registration by clicking the link below:\n"
+//                        + frontendBaseUrl
+//                        + "/users/registration-confirm?token="
+//                        + token
+//        );
+        try {
+            emailService.sendEmail(...);
+        } catch (Exception e) {
+            log.warn("Email sending failed, but user created", e);
+        }
+
 
         log.info("User created: {}", user);
     }
