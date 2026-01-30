@@ -1,5 +1,8 @@
 package com.vadim.tkach.gym_tracker.controller.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +15,21 @@ import java.util.UUID;
 @Data
 @Builder
 public class WorkoutInputDto {
+
+    @NotNull
     private LocalDate date;
+
+    @NotNull
     private String name;
+
+    @NotNull
     private String type;
+
     private String note;
+
+    @NotNull
     private UUID userId;
-    private List<WorkoutExerciseInputDto> exercises;
+
+    @NotEmpty
+    private List<@Valid WorkoutExerciseInputDto> exercises;
 }
