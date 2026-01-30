@@ -20,6 +20,8 @@ public class WorkoutExercise {
     private String note;
     private UUID exerciseId;
     private UUID workoutId;
+    private Exercise exercise;
+
 }
 
 

@@ -5,6 +5,7 @@ import com.vadim.tkach.gym_tracker.mapper.WorkoutExerciseMapper;
 import com.vadim.tkach.gym_tracker.mapper.WorkoutMapper;
 import com.vadim.tkach.gym_tracker.repository.*;
 import com.vadim.tkach.gym_tracker.repository.entity.*;
+import com.vadim.tkach.gym_tracker.service.model.Exercise;
 import com.vadim.tkach.gym_tracker.service.model.Workout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,16 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .map(we -> {
                     WorkoutExerciseEntity entity = workoutExerciseMapper.toWorkoutExerciseEntity(we);
 
-                    ExerciseEntity exerciseEntity = exerciseRepository.findById(we.getExerciseId())
-                            .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + we.getExerciseId()));
+                    ExerciseEntity exerciseEntity = null;
+                    if (we.getExerciseId() != null) {
+                        exerciseEntity = exerciseRepository.findById(we.getExerciseId())
+                                .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + we.getExerciseId()));
+                    } else if (we.getExercise() != null) {
+                        exerciseEntity = workoutExerciseMapper.toExerciseEntity(we.getExercise());
+                        exerciseRepository.save(exerciseEntity);
+                    } else {
+                        throw new RuntimeException("Exercise information is missing.");
+                    }
 
                     entity.setWorkout(workoutEntity);
                     entity.setExercise(exerciseEntity);
@@ -62,6 +71,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .orElseThrow(() -> new RuntimeException("Workout not found with id: " + id));
         return workoutMapper.toWorkout(entity);
     }
+
     @Override
     @Transactional
     public void updateWorkout(Workout workout) {
@@ -79,8 +89,16 @@ public class WorkoutServiceImpl implements WorkoutService {
                 .map(we -> {
                     WorkoutExerciseEntity entity = workoutExerciseMapper.toWorkoutExerciseEntity(we);
 
-                    ExerciseEntity exerciseEntity = exerciseRepository.findById(we.getExerciseId())
-                            .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + we.getExerciseId()));
+                    ExerciseEntity exerciseEntity = null;
+                    if (we.getExerciseId() != null) {
+                        exerciseEntity = exerciseRepository.findById(we.getExerciseId())
+                                .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + we.getExerciseId()));
+                    } else if (we.getExercise() != null) {
+                        exerciseEntity = workoutExerciseMapper.toExerciseEntity(we.getExercise());
+                        exerciseRepository.save(exerciseEntity);
+                    } else {
+                        throw new RuntimeException("Exercise information is missing.");
+                    }
 
                     entity.setWorkout(workoutEntity);
                     entity.setExercise(exerciseEntity);
@@ -93,7 +111,6 @@ public class WorkoutServiceImpl implements WorkoutService {
         workoutRepository.save(workoutEntity);
     }
 
-
     @Override
     public void deleteWorkout(UUID id) {
         if (!workoutRepository.existsById(id)) {
@@ -101,6 +118,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         workoutRepository.deleteById(id);
     }
+
     @Override
     public List<Workout> getWorkoutsByUserId(UUID userId) {
         return workoutRepository.findByUserId(userId)
@@ -110,4 +128,3 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
 }
-
