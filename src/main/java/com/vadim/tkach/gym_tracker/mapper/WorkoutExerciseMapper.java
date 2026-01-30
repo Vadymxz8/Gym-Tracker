@@ -8,7 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkoutExerciseMapper {
 
+    // MODEL -> ENTITY
     public WorkoutExerciseEntity toWorkoutExerciseEntity(WorkoutExercise model) {
+        if (model == null) {
+            return null;
+        }
+
         WorkoutExerciseEntity entity = new WorkoutExerciseEntity();
         entity.setReps(model.getReps());
         entity.setSets(model.getSets());
@@ -17,18 +22,32 @@ public class WorkoutExerciseMapper {
         return entity;
     }
 
+    // ENTITY -> MODEL
     public WorkoutExercise toWorkoutExercise(WorkoutExerciseEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
         return WorkoutExercise.builder()
                 .id(entity.getId())
                 .reps(entity.getReps())
                 .sets(entity.getSets())
                 .weight(entity.getWeight())
                 .note(entity.getNote())
-                .exerciseId(entity.getExercise().getId())
+                .exerciseId(
+                        entity.getExercise() != null
+                                ? entity.getExercise().getId()
+                                : null
+                )
                 .build();
     }
 
+    // DTO -> MODEL
     public WorkoutExercise toWorkoutExercise(WorkoutExerciseInputDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
         return WorkoutExercise.builder()
                 .reps(dto.getReps())
                 .sets(dto.getSets())

@@ -1,7 +1,10 @@
 package com.vadim.tkach.gym_tracker.controller;
 
-import com.vadim.tkach.gym_tracker.service.workout.WorkoutService;
+import com.vadim.tkach.gym_tracker.controller.dto.WorkoutInputDto;
+import com.vadim.tkach.gym_tracker.mapper.WorkoutMapper;
 import com.vadim.tkach.gym_tracker.service.model.Workout;
+import com.vadim.tkach.gym_tracker.service.workout.WorkoutService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +20,19 @@ import java.util.UUID;
 public class WorkoutController {
 
     private final WorkoutService workoutService;
+    private final WorkoutMapper workoutMapper;
 
-//    @PostMapping
-//    public ResponseEntity<Void> createWorkout(@RequestBody Workout workout) {
-//        workoutService.createWorkout(workout);
-//        return ResponseEntity.status(201).build();
-//    }
-@PostMapping
-public ResponseEntity<Void> createWorkout(@RequestBody Workout workout) {
-    log.info("POST /api/workouts payload: {}", workout);
-    if (workout == null) {
-        log.warn("Received null workout body");
-        return ResponseEntity.badRequest().build();
+    @PostMapping
+    public ResponseEntity<Void> createWorkout(
+            @Valid @RequestBody WorkoutInputDto dto
+    ) {
+        log.info("POST /api/workouts payload: {}", dto);
+
+        Workout workout = workoutMapper.toWorkout(dto);
+        workoutService.createWorkout(workout);
+
+        return ResponseEntity.status(201).build();
     }
-    if (workout.getUserId() == null) {
-        log.warn("Missing userId in incoming workout: {}", workout);
-        return ResponseEntity.badRequest().body(null);
-    }
-    workoutService.createWorkout(workout);
-    return ResponseEntity.status(201).build();
-}
 
     @GetMapping
     public ResponseEntity<List<Workout>> getAllWorkouts() {
@@ -49,9 +45,15 @@ public ResponseEntity<Void> createWorkout(@RequestBody Workout workout) {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateWorkout(@PathVariable UUID id, @RequestBody Workout workout) {
-        workout.setId(id); // важливо, бо id йде з path
+    public ResponseEntity<Void> updateWorkout(
+            @PathVariable UUID id,
+            @Valid @RequestBody WorkoutInputDto dto
+    ) {
+        Workout workout = workoutMapper.toWorkout(dto);
+        workout.setId(id);
+
         workoutService.updateWorkout(workout);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -66,4 +68,3 @@ public ResponseEntity<Void> createWorkout(@RequestBody Workout workout) {
         return ResponseEntity.ok(workoutService.getWorkoutsByUserId(userId));
     }
 }
-
