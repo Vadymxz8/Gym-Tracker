@@ -37,5 +37,5 @@ public class WorkoutEntity {
     private UserEntity user;
 
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkoutExerciseEntity> workoutExercises;
+    private List<WorkoutExerciseEntity> exercises;
 }

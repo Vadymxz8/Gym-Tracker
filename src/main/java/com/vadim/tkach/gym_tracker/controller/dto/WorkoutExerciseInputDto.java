@@ -17,7 +17,4 @@ public class WorkoutExerciseInputDto {
     private int sets;
     private String note;
     private UUID exerciseId;
-    private UUID workoutId;
-    private Exercise exercise;
-
 }
