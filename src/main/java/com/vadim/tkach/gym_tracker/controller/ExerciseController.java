@@ -18,9 +18,9 @@ public class ExerciseController {
     private final ExerciseService exerciseService;
 
     @PostMapping
-    public ResponseEntity<Void> createExercise(@RequestBody Exercise exercise) {
-        exerciseService.createExercise(exercise);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Exercise> createExercise(@RequestBody Exercise exercise) {
+        Exercise created = exerciseService.createExercise(exercise);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping

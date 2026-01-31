@@ -22,8 +22,11 @@ public class ExerciseServiceImpl implements ExerciseService {
     private final ExerciseMapper exerciseMapper;
 
     @Override
-    public void createExercise(Exercise exercise) {
-        exerciseRepository.save(exerciseMapper.toExerciseEntity(exercise));
+    public Exercise createExercise(Exercise exercise) {
+        ExerciseEntity saved = exerciseRepository.save(
+                exerciseMapper.toExerciseEntity(exercise)
+        );
+        return exerciseMapper.toExercise(saved);
     }
 
     @Override
