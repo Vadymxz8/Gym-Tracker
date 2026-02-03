@@ -17,27 +17,11 @@ public class ExerciseController {
 
     private final ExerciseService exerciseService;
 
-//    @PostMapping
-//    public ResponseEntity<Exercise> createExercise(@RequestBody Exercise exercise) {
-//        Exercise created = exerciseService.createExercise(exercise);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-//    }
-@PostMapping
-public ResponseEntity<Exercise> createExercise(@RequestBody Exercise exercise) {
-
-    System.out.println(">>> RECEIVED EXERCISE: " + exercise);
-
-    if (exercise.getId() != null) {
-        System.out.println("WARNING: frontend sent ID = " + exercise.getId());
+    @PostMapping
+    public ResponseEntity<Exercise> createExercise(@RequestBody Exercise exercise) {
+        Exercise created = exerciseService.createExercise(exercise);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-
-    Exercise created = exerciseService.createExercise(exercise);
-
-    System.out.println("<<< SAVED EXERCISE WITH ID = " + created.getId());
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(created);
-}
-
 
     @GetMapping
     public ResponseEntity<List<Exercise>> getAllExercises() {
