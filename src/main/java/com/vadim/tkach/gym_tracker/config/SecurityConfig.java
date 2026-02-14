@@ -48,6 +48,17 @@ public class SecurityConfig {
                                                 new HttpSessionSecurityContextRepository())))
                 .authorizeHttpRequests(requests ->
                         requests
+//                                .requestMatchers(
+//                                        "/users/login",
+//                                        "/users/registration-complete",
+//                                        "/users/passwords/reset",
+//                                        "/users/passwords/reset-verify**",
+//                                        "/users/passwords/reset-complete"
+//                                ).permitAll()
+//                                .requestMatchers("/api/progress/**").authenticated()
+//                                // інше — на твій розсуд
+//                                .anyRequest().authenticated()
+//                )
                                 .requestMatchers("/api/**").permitAll()
                                 .requestMatchers("/api/exercises/**").permitAll()
                                 .requestMatchers("/api/workouts/**").permitAll()
@@ -67,7 +78,6 @@ public class SecurityConfig {
                     configuration.setAllowedHeaders(List.of("*"));
                     return configuration;
                 }))
-                .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e ->
                         e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
